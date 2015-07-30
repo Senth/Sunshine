@@ -1,0 +1,8 @@
+<resources>
+	<string name="app_name">Sunshine</string>
+	<string name="date_name">Saturday, July 25</string>
+	<string name="degrees_day">24°</string>
+	<string name="degrees_night">8°</string>
+	<string name="weather_sunny">Sunny</string>
+	<string name="action_settings">Settings</string>
+</resources>
