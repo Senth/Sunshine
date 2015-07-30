@@ -15,6 +15,8 @@ import android.widget.ListView;
  */
 public class MainActivityFragment extends Fragment {
 
+private ArrayAdapter<String> mForecastAdapter = null;
+
 public MainActivityFragment() {
 }
 
@@ -48,6 +50,4 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
 	return rootView;
 }
-
-private ArrayAdapter<String> mForecastAdapter = null;
 }
