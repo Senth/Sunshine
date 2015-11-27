@@ -1,10 +1,6 @@
 package com.spiddekauga.sunshine;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.spiddekauga.http.HttpGetBuilder;
@@ -23,10 +19,18 @@ private static final String LOG_TAG = FetchForecastTask.class.getSimpleName();
 protected String doInBackground(Location... params) {
 	HttpGetBuilder getBuilder = new HttpGetBuilder("http://api.openweathermap.org/data/2.5/daily");
 
+	if (params.length != 1) {
+		return null;
+	}
+
+	Location location = params[0];
+
 	try {
 		getBuilder.addParameter("units", "metric");
-		getBuilder.addParameter("q", "Lund,se");
-		getBuilder.addParameter("cnt", "7");
+		getBuilder.addParameter("lat", location.latitude);
+		getBuilder.addParameter("lon", location.longitude);
+		getBuilder.addParameter("cnt", 7);
+		getBuilder.addParameter("APPID", APPID);
 		HttpURLConnection urlConnection = getBuilder.build();
 
 		HttpResponseParser responseParser = new HttpResponseParser();
@@ -46,4 +50,6 @@ protected String doInBackground(Location... params) {
 protected void onPostExecute(String result) {
 	Log.d(LOG_TAG, result);
 }
+
+private static final String APPID = "dbba3fda691910e912ea9b2eec9151f2";
 }

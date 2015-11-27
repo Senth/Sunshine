@@ -1,6 +1,5 @@
 package com.spiddekauga.sunshine;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -77,4 +76,6 @@ public boolean onOptionsItemSelected(MenuItem item) {
 
 	return super.onOptionsItemSelected(item);
 }
+
+private static final Location LUND_LOCATION = new Location(55.7, 13.2);
 }
