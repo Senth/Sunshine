@@ -1,17 +1,28 @@
 package com.spiddekauga.sunshine;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.Date;
 
 /**
  * Weather data for a specific day
  * @author Matteus Magnusson <matteus.magnusson@spiddekauga.com>
  */
 public class WeatherDayData {
+private static DecimalFormat mDecimalFormatter = new DecimalFormat("#");
+/**
+ * All information stored as string
+ */
+private String mInfo;
+
 /**
  * Create a new weather data
+ * @param dayIndex the index of the day
+ * @param date what date the day is
+ * @param weatherType what type of weather it is the specified day
+ * @param minTemp minimum temperature the current day
+ * @param maxTemp maximum temperature the current day
  */
-public WeatherDayData(int dayIndex, String day, String weatherType, double maxTemp, double minTemp) {
+public WeatherDayData(int dayIndex, Date date, String weatherType, double minTemp, double maxTemp) {
 	StringBuilder stringBuilder = new StringBuilder();
 
 	// Day
@@ -20,7 +31,7 @@ public WeatherDayData(int dayIndex, String day, String weatherType, double maxTe
 	} else if (dayIndex == 1) {
 		stringBuilder.append("Tomorrow");
 	} else {
-		stringBuilder.append(day);
+		stringBuilder.append(date.toString());
 	}
 	stringBuilder.append(" — ");
 
@@ -40,9 +51,4 @@ public WeatherDayData(int dayIndex, String day, String weatherType, double maxTe
 public String getInfo() {
 	return mInfo;
 }
-
-/** All information stored as string */
-private String mInfo;
-
-private static DecimalFormat mDecimalFormatter = new DecimalFormat("#");
 }

@@ -1,37 +1,51 @@
 package com.spiddekauga.sunshine;
 
-import android.util.JsonReader;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
- * Created by senth on 2015-12-11.
+ * Parses weather data from the open weather data API
+ * @author Matteus Magnusson <matteus.magnusson@spiddekauga.com>
  */
 public class WeatherDataParser {
-/**
- * Retrieves the maximum temperature for a specific date from an api call to openweathermap.
- * @param weatherJsonString the JSON string with weather data
- * @param dayIndex the day to get the max temperature from. Starts at 0
- * @return max temperature of the day.
- */
-public static double getMaxTemperatureForDay(String weatherJsonString, int dayIndex) throws JSONException {
-	JSONObject day = getDay(weatherJsonString, dayIndex);
-	JSONObject temperature = day.getJSONObject("temp");
-	return temperature.getDouble("max");
-}
+private static final String TIME = "dt";
+private static final String DAYS = "list";
+private static final String TEMPERATURES = "temp";
+private static final String TEMP_MIN = "min";
+private static final String TEMP_MAX = "max";
+private static final String WEATHER_INFO = "weather";
+private static final String WEATHER_TYPE = "main";
 
 /**
- * Retreives the day of the weather string
- * @param weatherJsonString the JSON string with weather data
- * @param dayIndex the day to get the max temperature from
- * @return weather data for the specified date
+ * Convert the weather API JSON string into weather day data objects
+ * @param weatherJson the JSON string with weather data
+ * @return all days containing weather data
  */
-private static JSONObject getDay(String weatherJsonString, int dayIndex) throws JSONException {
-	JSONObject jsonObject = new JSONObject(weatherJsonString);
-	JSONArray days = jsonObject.getJSONArray("list");
-	return days.getJSONObject(dayIndex);
-}
+public static List<WeatherDayData> toWeatherDayData(String weatherJson) throws JSONException {
+	JSONObject jsonObject = new JSONObject(weatherJson);
+	JSONArray days = jsonObject.getJSONArray(DAYS);
 
+	List<WeatherDayData> data = new ArrayList<>();
+	for (int i = 0; i < days.length(); ++i) {
+		JSONObject day = days.getJSONObject(i);
+
+		int epochTime = day.getInt(TIME);
+		Date date = new Date(epochTime);
+		JSONObject temperatures = day.getJSONObject(TEMPERATURES);
+		double minTemp = temperatures.getDouble(TEMP_MIN);
+		double maxTemp = temperatures.getDouble(TEMP_MAX);
+		JSONObject weatherInfo = day.getJSONObject(WEATHER_INFO);
+		String weatherType = weatherInfo.getString(WEATHER_TYPE);
+
+		WeatherDayData weatherDayData = new WeatherDayData(i, date, weatherType, minTemp, maxTemp);
+		data.add(weatherDayData);
+	}
+
+	return data;
+}
 }
