@@ -1,23 +1,36 @@
 package com.spiddekauga.sunshine;
 
 import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import com.spiddekauga.http.HttpGetBuilder;
 import com.spiddekauga.http.HttpResponseParser;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
 /**
- * Created by senth on 2015-08-21.
+ * Fetches weather data from the weather api
+ * @author Matteus Magnusson <matteus.magnusson@spiddekauga.com>
  */
-public class FetchForecastTask extends AsyncTask<Location, Void, String> {
-private static final String LOG_TAG = FetchForecastTask.class.getSimpleName();
+class FetchForecastTask extends AsyncTask<Location, Void, WeatherCollection> {
+private static final String APPID = "dbba3fda691910e912ea9b2eec9151f2";
+private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily";
+private final ArrayAdapter<String> mForecastAdapter;
+
+/**
+ * Create a new fetch forecast task
+ * @param forecastAdapter the adapter to update the information of
+ */
+FetchForecastTask(ArrayAdapter<String> forecastAdapter) {
+	mForecastAdapter = forecastAdapter;
+}
 
 @Override
-protected String doInBackground(Location... params) {
-	HttpGetBuilder getBuilder = new HttpGetBuilder("http://api.openweathermap.org/data/2.5/daily");
+protected WeatherCollection doInBackground(Location... params) {
+	HttpGetBuilder getBuilder = new HttpGetBuilder(BASE_URL);
 
 	if (params.length != 1) {
 		return null;
@@ -33,13 +46,12 @@ protected String doInBackground(Location... params) {
 		getBuilder.addParameter("APPID", APPID);
 		HttpURLConnection urlConnection = getBuilder.build();
 
-		HttpResponseParser responseParser = new HttpResponseParser();
-		String jsonResponse = responseParser.getStringResponse(urlConnection);
+		String jsonResponse = HttpResponseParser.getStringResponse(urlConnection);
 
 		urlConnection.disconnect();
 
-		return jsonResponse;
-	} catch (IOException e) {
+		return WeatherDataParser.toWeatherCollection(jsonResponse);
+	} catch (IOException | JSONException e) {
 		e.printStackTrace();
 	}
 
@@ -47,9 +59,10 @@ protected String doInBackground(Location... params) {
 }
 
 @Override
-protected void onPostExecute(String result) {
-	Log.d(LOG_TAG, result);
+protected void onPostExecute(WeatherCollection result) {
+	if (result != null) {
+		mForecastAdapter.clear();
+		mForecastAdapter.addAll(result.getAllInfos());
+	}
 }
-
-private static final String APPID = "dbba3fda691910e912ea9b2eec9151f2";
 }
